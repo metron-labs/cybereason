@@ -10,6 +10,11 @@
     "python_version": "3",
     "product_version_regex": ".*",
     "publisher": "Cybereason",
+    "contributors": [
+        {
+          "name": "Kapil Bisen"
+        }
+    ],
     "license": "Copyright (c) Cybereason, 2018-2021",
     "app_version": "2.1.0",
     "utctime_updated": "2020-03-05T07:04:29.824069Z",
