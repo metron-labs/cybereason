@@ -24,6 +24,7 @@ from phantom.action_result import ActionResult
 from cybereason_consts import *
 from cybereason_session import CybereasonSession
 
+TIMEOUT = 60
 
 class CybereasonPoller:
     def __init__(self):
@@ -152,7 +153,7 @@ class CybereasonPoller:
         try:
             if not self.feature_translation:
                 url = "{0}/rest/translate/features/all".format(connector._base_url)
-                self.feature_translation = self.cr_session.get(url).json()
+                self.feature_translation = self.cr_session.get(url, timeout=TIMEOUT).json()
             # At this point we are guaranteed to have a feature translation
             (decision_feature_type, decision_feature_key) = self._get_decision_feature_details(decision_feature)
             feature_description = self.feature_translation[decision_feature_type][decision_feature_key]["translatedName"]
@@ -194,7 +195,7 @@ class CybereasonPoller:
         iterCount = 0
         try:
             while hasMoreSensors and iterCount < 100:
-                response = self.cr_session.post(url=url, json=query, headers=connector._headers)
+                response = self.cr_session.post(url=url, json=query, headers=connector._headers, timeout=TIMEOUT)
                 result = response.json()
                 sensors = sensors + result["sensors"]
                 hasMoreSensors = result["hasMoreResults"]
@@ -242,7 +243,7 @@ class CybereasonPoller:
         }
         process_details = {}
         try:
-            res = self.cr_session.post(url=url, json=query, headers=connector._headers)
+            res = self.cr_session.post(url=url, json=query, headers=connector._headers, timeout=TIMEOUT)
             process_details = res.json()["data"]["resultIdToElementDataMap"]
         except Exception as e:
             err = connector._get_error_message_from_exception(e)
@@ -297,7 +298,7 @@ class CybereasonPoller:
         }
         connection_details = {}
         try:
-            res = self.cr_session.post(url=url, json=query, headers=connector._headers)
+            res = self.cr_session.post(url=url, json=query, headers=connector._headers, timeout=TIMEOUT)
             connection_details = res.json()["data"]["resultIdToElementDataMap"]
         except Exception as e:
             err = connector._get_error_message_from_exception(e)
@@ -346,7 +347,7 @@ class CybereasonPoller:
         }
         user_details = {}
         try:
-            res = self.cr_session.post(url=url, json=query, headers=connector._headers)
+            res = self.cr_session.post(url=url, json=query, headers=connector._headers, timeout=TIMEOUT)
             user_details = res.json()["data"]["resultIdToElementDataMap"]
         except Exception as e:
             err = connector._get_error_message_from_exception(e)
@@ -463,7 +464,7 @@ class CybereasonPoller:
         malops_dict = {}
         url = f"{connector._base_url}/rest/detection/inbox"
         query = {"startTime": start_timestamp, "endTime": end_timestamp}
-        malop_res = self.cr_session.post(url=url, json=query, headers=connector._headers)
+        malop_res = self.cr_session.post(url=url, json=query, headers=connector._headers, timeout=TIMEOUT)
         malops = json.loads(malop_res.content)
         connector.save_progress(f"Malops response: {len(malops['malops'])}")
 
@@ -482,7 +483,7 @@ class CybereasonPoller:
                     "perGroupLimit": max_number_malops,
                     "perFeatureLimit": max_number_malops
                 }
-                res = self.cr_session.post(url=url, json=query, headers=connector._headers)
+                res = self.cr_session.post(url=url, json=query, headers=connector._headers, timeout=TIMEOUT)
                 # connector.save_progress("EDR Malop : {}".format(res.json()["data"]["resultIdToElementDataMap"]))
                 malops_dict[malop['guid']] = res.json()["data"]["resultIdToElementDataMap"][malop['guid']]
             else:
@@ -686,7 +687,7 @@ class CybereasonPoller:
         url = "{0}/rest/crimes/get-comments".format(connector._base_url)
         query = malop_id
         try:
-            res = self.cr_session.post(url=url, data=query, headers=connector._headers)
+            res = self.cr_session.post(url=url, data=query, headers=connector._headers, timeout=TIMEOUT)
             comments = res.json()
             for comment in comments:
                 cef = {
@@ -775,7 +776,7 @@ class CybereasonPoller:
             "limit": max_malwares_in_each_fetch,
             "offset": offset
         }
-        return self.cr_session.post(url=url, json=query, headers=connector._headers, verify=connector._verify_server_cert)
+        return self.cr_session.post(url=url, json=query, headers=connector._headers, verify=connector._verify_server_cert, timeout=TIMEOUT)
 
     def _ingest_malware(self, connector, config, malware):
         success = phantom.APP_ERROR
