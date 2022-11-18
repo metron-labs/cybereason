@@ -471,15 +471,16 @@ class CybereasonPoller:
             connector.debug_print(f"Malop EDR: {malop['edr']}")
             if malop['edr']:
                 url = "{0}/rest/crimes/unified".format(connector._base_url)
-                query = {"queryPath": [{
-                            "requestedType": "MalopProcess",
-                            "guidList": ["{}".format(malop['guid'])],
-                            "result": True
-                            }],
-                        "totalResultLimit": max_number_malops,
-                        "perGroupLimit": max_number_malops,
-                        "perFeatureLimit": max_number_malops,
-                        "templateContext": "OVERVIEW"
+                query = {
+                    "templateContext": "OVERVIEW",
+                    "queryPath": [{
+                        "requestedType": "MalopProcess",
+                        "guidList": ["{}".format(malop['guid'])],
+                        "result": True
+                    }],
+                    "totalResultLimit": max_number_malops,
+                    "perGroupLimit": max_number_malops,
+                    "perFeatureLimit": max_number_malops
                 }
                 res = self.cr_session.post(url=url, json=query, headers=connector._headers)
                 # connector.save_progress("EDR Malop : {}".format(res.json()["data"]["resultIdToElementDataMap"]))
