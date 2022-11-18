@@ -26,6 +26,7 @@ from cybereason_session import CybereasonSession
 
 TIMEOUT = 60
 
+
 class CybereasonPoller:
     def __init__(self):
         return None
