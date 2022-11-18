@@ -480,7 +480,7 @@ class CybereasonPoller:
                         "perGroupLimit": max_number_malops,
                         "perFeatureLimit": max_number_malops,
                         "templateContext": "OVERVIEW"
-                    }
+                }
                 res = self.cr_session.post(url=url, json=query, headers=connector._headers)
                 # connector.save_progress("EDR Malop : {}".format(res.json()["data"]["resultIdToElementDataMap"]))
                 malops_dict[malop['guid']] = res.json()["data"]["resultIdToElementDataMap"][malop['guid']]
