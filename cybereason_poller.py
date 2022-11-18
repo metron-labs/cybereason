@@ -521,7 +521,7 @@ class CybereasonPoller:
             container_json["description"] = "None"
             container_json["status"] = malop_data['status']
             container_json["severity"] = malop_data['severity']
-            container_json["start_time"] = malop_data['creationTime']
+            container_json["start_time"] = self._phtimestamp_from_crtimestamp(malop_data['creationTime'])
 
         return container_json
 
