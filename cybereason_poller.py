@@ -63,7 +63,7 @@ class CybereasonPoller:
                     "This is a first time poll. We will poll for malware from the last {days} days", days=malware_historical_days
                 )
                 malware_millisec_since_last_poll = malware_historical_days * 60 * 60 * 24 * 1000
-                state["is_first_poll"] = False 
+                state["is_first_poll"] = False
             else:
                 last_poll_timestamp = datetime.datetime.fromtimestamp(state["last_poll_timestamp"])
                 malop_start_time = last_poll_timestamp
@@ -462,7 +462,7 @@ class CybereasonPoller:
     def _get_malops(self, connector, start_timestamp, end_timestamp, max_number_malops):
         malops_dict = {}
         url = f"{connector._base_url}/rest/detection/inbox"
-        query = {"startTime":start_timestamp, "endTime":end_timestamp}
+        query = {"startTime": start_timestamp, "endTime": end_timestamp}
         malop_res = self.cr_session.post(url=url, json=query, headers=connector._headers)
         malops = json.loads(malop_res.content)
         connector.save_progress(f"Malops response: {len(malops['malops'])}")
@@ -480,7 +480,7 @@ class CybereasonPoller:
                         "perGroupLimit": max_number_malops,
                         "perFeatureLimit": max_number_malops,
                         "templateContext": "OVERVIEW"
-                        }
+                    }
                 res = self.cr_session.post(url=url, json=query, headers=connector._headers)
                 # connector.save_progress("EDR Malop : {}".format(res.json()["data"]["resultIdToElementDataMap"]))
                 malops_dict[malop['guid']] = res.json()["data"]["resultIdToElementDataMap"][malop['guid']]
@@ -495,15 +495,15 @@ class CybereasonPoller:
         container_json = {}
         container_json["data"] = malop_data
         container_json["source_data_identifier"] = malop_id
-        container_json["label"] = config.get("ingest", {}).get("container_label","")
+        container_json["label"] = config.get("ingest", {}).get("container_label", "")
 
         if malop_data.get("elementValues", False):
             container_json["name"] = malop_data["elementValues"]["primaryRootCauseElements"]["elementValues"][0]["name"]
             container_json["artifacts"] = self._get_artifacts_for_malop(connector, malop_id, malop_data)
         else:
             container_json["name"] = malop_data.get("displayName", "")
-            container_json["artifacts"] = malop_data.get('machines',[])
-            container_json["artifacts"] = container_json["artifacts"] + malop_data.get('users',[])
+            container_json["artifacts"] = malop_data.get('machines', [])
+            container_json["artifacts"] = container_json["artifacts"] + malop_data.get('users', [])
 
         if malop_data.get("simpleValues", False):
             decision_feature = malop_data["simpleValues"]["decisionFeature"]["values"][0]
